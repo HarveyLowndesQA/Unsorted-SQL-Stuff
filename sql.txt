@@ -1,0 +1,67 @@
+SELECT marks FROM (SELECT MIN(grpnum) FROM QA);
+
+select * from marks where marks in(
+select marks from marks
+group by marks
+order by marks desc
+FETCH NEXT 3 ROWS ONLY
+);
+
+Select marks from marks 
+where marks=(select max(marks) from marks)
+OR marks=(select max(marks) from marks where marks < (select max(marks) from marks)) 
+OR marks=(select max(marks) from marks where marks < (select max(marks) from marks where marks < (select max(marks) from marks))) 
+group by marks 
+order by marks desc;
+
+
+
+
+
+select* from marks where marks in (Select marks from marks 
+where marks=(select max(marks) from marks) 
+OR marks=(select max(marks) from marks where marks < (select max(marks) from marks)) 
+OR marks=(select max(marks) from marks where marks < (select max(marks) from marks where marks < (select max(marks) from marks))) 
+group by marks) order by marks desc;
+
+
+select* from QA where marks in 
+(Select marks from QA where marks=(select max(marks) from QA) 
+OR marks=(select max(marks) from QA where marks < (select max(marks) from QA)) 
+OR marks=(select max(marks) from QA where marks < (select max(marks) from QA where marks < (select max(marks) from QA))) 
+group by marks) order by marks desc;
+
+select marks from marks where marks in(
+select marks from marks
+group by marks
+order by marks desc
+FETCH NEXT 3 ROWS ONLY
+)
+
+create table hsbc(
+accno char(5) unique,
+name char(30),
+address char(30)
+);
+
+Select 'MC' || LPAD(max(substr(accno,3,3))+1, 3,0) from hsbc where accno like 'MC%';
+
+
+INSERT INTO HSBC values ((Select 'MC' || LPAD(max(substr(accno,3,3))+1, 3,0) from hsbc where accno like 'MC%'), '&name', '&address');
+
+INSERT INTO HSBC values ((Select 'FC' || LPAD(max(substr(accno,3,3))+1, 3,0) from hsbc where accno like 'FC%'), '&name', '&address');
+
+SELECT NAME FROM PRODUCTS WHERE PID in (SELECT PID FROM sales GROUP BY pid ORDER BY max(COUNT(*)))
+
+Select name from products 
+where pid in (select pid from sales group by pid having count(pid) 
+= (Select count(pid) from sales group by pid order by count(pid) desc FETCH NEXT 1 ROWS ONLY))
+
+Select title from category where catid in(
+Select catid from subcategory where subid in(
+Select subid from products 
+where pid in 
+(select pid from sales group by pid having count(pid) 
+= (Select max(count(pid)) from sales group by pid))));
+
+SELECT PID FROM SALES;

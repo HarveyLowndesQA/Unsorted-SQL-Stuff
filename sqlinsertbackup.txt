@@ -1,0 +1,12 @@
+CREATE OR REPLACE TRIGGER QAINSTRIGGER
+	BEFORE UPDATE ON QA 
+	FOR EACH ROW
+BEGIN
+	IF NOT :OLD.GRP=:NEW.GRP THEN
+		execute immediate 'DELETE FROM BACKUP' || :OLD.GRP || ' WHERE REGNO=' || :OLD.REGNO;
+		execute immediate 'INSERT INTO BACKUP' || :NEW.GRP || ' values (' || :NEW.REGNO || ', ''' || :NEW.NAME || ''', ''' || :NEW.GRP || ''', ''' || :NEW.AREA || ''', ' || :NEW.MARKS || ')';
+	END IF;
+	IF :OLD.GRP=:NEW.GRP THEN
+		execute immediate 'UPDATE BACKUP' || :OLD.GRP || ' SET REGNO=' || :NEW.REGNO || ', NAME=''' || :NEW.NAME || ''', GRP=''' || :NEW.GRP || ''', AREA=''' || :NEW.AREA || ''', MARKS=' || :NEW.MARKS || ' WHERE REGNO=' || :OLD.REGNO;
+	END IF;
+END;
